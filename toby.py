@@ -7,7 +7,7 @@ import datetime
 from telegram.ext import Updater, CommandHandler
 
 
-def today_at(*, hour, minute):
+def today_at(*, hour, minute=0):
     return datetime.datetime.now().replace(
         hour=hour, minute=minute, second=0, microsecond=0
     )
