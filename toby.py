@@ -6,10 +6,20 @@ import datetime
 
 from telegram.ext import Updater, CommandHandler
 
+
+def today_at(*, hour, minute):
+    return datetime.datetime.now().replace(
+        hour=hour, minute=minute, second=0, microsecond=0
+    )
+
+
 walks_notification_interval_minutes = 20
 walks_check_interval_seconds = 60
 desired_walks_interval_hours = 5
 supress_notifications_hours_window = (5, 8)
+inactive_walkers = [
+    {"id": "1", "first_name": "Paula", "time": today_at(hour=2, minute=42)}
+]
 group_chat_id = -663974916
 token = os.getenv("TELEGRAM_TOKEN")
 
@@ -148,6 +158,12 @@ def check_for_walks(context):
 
 job_queue.run_repeating(check_for_walks, interval=walks_check_interval_seconds, first=1)
 
+for inactive_walker in inactive_walkers:
+    job_queue.run_daily(
+        lambda ctx: save_walk(inactive_walker["id"], inactive_walker["first_name"]),
+        inactive_walker["time"],
+    )
+
 
 def walk(update, context):
     sender = update.message.from_user
@@ -162,7 +178,7 @@ def walk(update, context):
 
 def stats(update, context):
     statistics = calc_statistics()
- 
+
     if not statistics:
         context.bot.send_message(chat_id=group_chat_id, text=no_walks_stats_message)
 
