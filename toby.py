@@ -18,7 +18,7 @@ walks_check_interval_seconds = 60
 desired_walks_interval_hours = 5
 supress_notifications_hours_window = (5, 8)
 inactive_walkers = [
-    {"id": "1", "first_name": "Paula", "time": today_at(hour=2, minute=42)}
+    {"id": "1", "first_name": "Paula", "time": today_at(hour=8)}
 ]
 group_chat_id = -663974916
 token = os.getenv("TELEGRAM_TOKEN")
