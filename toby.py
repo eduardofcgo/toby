@@ -104,7 +104,7 @@ def last_walk_elapsed_hours():
         return (datetime.datetime.now() - last_date).total_seconds() / 3600
 
 
-def statistics():
+def calc_statistics():
     c = con.cursor()
     rows = list(
         c.execute(
@@ -161,18 +161,22 @@ def walk(update, context):
 
 
 def stats(update, context):
-    message_lines = []
-    for first_name, walk_count, walk_percentage in statistics():
-        message_line = walk_stats_message.format(
-            name=first_name, count=walk_count, percentage=walk_percentage
-        )
-        message_lines.append(message_line)
+    statistics = calc_statistics()
+ 
+    if not statistics:
+        context.bot.send_message(chat_id=group_chat_id, text=no_walks_stats_message)
+
     else:
-        message_lines.append(no_walks_stats_message)
+        message_lines = []
 
-    message = "\n".join(message_lines)
+        for first_name, walk_count, walk_percentage in statistics:
+            message_line = walk_stats_message.format(
+                name=first_name, count=walk_count, percentage=walk_percentage
+            )
+            message_lines.append(message_line)
 
-    context.bot.send_message(chat_id=group_chat_id, text=message)
+        message = "\n".join(message_lines)
+        context.bot.send_message(chat_id=group_chat_id, text=message)
 
 
 walk_handler = CommandHandler("walk", walk)
