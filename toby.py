@@ -9,8 +9,9 @@ from telegram.ext import Updater, CommandHandler
 walks_notification_interval_minutes = 20
 walks_check_interval_seconds = 60
 desired_walks_interval_hours = 5
+supress_notifications_hours_window = (5, 8)
 group_chat_id = -663974916
-token = os.getenv('TELEGRAM_TOKEN')
+token = os.getenv("TELEGRAM_TOKEN")
 
 walk_message = "O {name} foi-me passear 🐕"
 walk_stats_message = "{name} - {count} passeios ({percentage}%)"
@@ -54,8 +55,9 @@ class NotificationThrottler:
 
 
 def should_supress_notification():
+    lower_limit, higher_limit = supress_notifications_hours_window
     now = datetime.datetime.now()
-    return 5 < now.hour <= 8
+    return lower_limit < now.hour < higher_limit
 
 
 con = sqlite3.connect(
@@ -104,8 +106,9 @@ def last_walk_elapsed_hours():
 
 def statistics():
     c = con.cursor()
-    rows = list(c.execute(
-        """
+    rows = list(
+        c.execute(
+            """
         select
             walkers.first_name,
             count(walks.walker_id),
@@ -114,7 +117,8 @@ def statistics():
         left join walkers on walks.walker_id = walkers.id
         group by walker_id;
        """
-    ))
+        )
+    )
     c.close()
 
     return rows
