@@ -119,14 +119,15 @@ def calc_statistics():
     rows = list(
         c.execute(
             """
-        select
-            walkers.first_name,
-            count(walks.walker_id),
-            count(walks.walker_id) / (select count(*) from walks) * 100
-        from walks
-        left join walkers on walks.walker_id = walkers.id
-        group by walker_id;
-       """
+            select
+                walkers.first_name,
+                count(walks.walker_id) as walk_count,
+                cast(100.0 * count(walks.walker_id) / (select count(*) from walks) as int)
+            from walks
+            left join walkers on walks.walker_id = walkers.id
+            group by walker_id
+            order by walk_count desc
+            """
         )
     )
     c.close()
