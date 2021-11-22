@@ -7,11 +7,11 @@ import datetime
 from telegram.ext import Updater, CommandHandler
 
 
-walks_notification_interval_minutes = 20
-walks_check_interval_seconds = 60
-desired_walks_interval_hours = 5
-supress_notifications_hours_window = (5, 8)
-inactive_walkers = [{"id": "1", "first_name": "Paula", "hour": 8}]
+walks_notification_interval_minutes = 30
+walks_check_interval_seconds = 10
+desired_walks_interval_hours = 6
+disable_notifications_hours_window = (5, 8)
+inactive_daily_walkers = [{"id": "1", "first_name": "Paula", "hour": 8}]
 group_chat_id = -663974916
 token = os.getenv("TELEGRAM_TOKEN")
 
@@ -62,10 +62,10 @@ class NotificationThrottler:
         self.last_notification_time = datetime.datetime.now()
 
 
-def notifications_enabled():
-    lower_limit, higher_limit = supress_notifications_hours_window
+def notifications_disabled():
+    lower_limit, higher_limit = disable_notifications_hours_window
     now = datetime.datetime.now()
-    return lower_limit < now.hour < higher_limit
+    return lower_limit <= now.hour <= higher_limit
 
 
 con = sqlite3.connect(
@@ -144,7 +144,7 @@ job_queue = updater.job_queue
 
 def check_for_walks(context):
     if (
-        notifications_enabled()
+        not notifications_disabled()
         and notification_throttler.should_notify()
         and (elapsed_hours := last_walk_elapsed_hours()) > desired_walks_interval_hours
     ):
@@ -156,7 +156,7 @@ def check_for_walks(context):
 
 job_queue.run_repeating(check_for_walks, interval=walks_check_interval_seconds, first=1)
 
-for inactive_walker in inactive_walkers:
+for inactive_walker in inactive_daily_walkers:
     job_queue.run_daily(
         lambda ctx: save_walk(inactive_walker["id"], inactive_walker["first_name"]),
         today_at(hour=inactive_walker["hour"]),
