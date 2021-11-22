@@ -1,0 +1,12 @@
+[Unit]
+Description=Toby Bot
+After=multi-user.target
+
+[Service]
+Type=simple
+Restart=always
+Environment="TELEGRAM_TOKEN=token"
+ExecStart=/usr/bin/python3 /root/toby/toby.py
+
+[Install]
+WantedBy=multi-user.target
