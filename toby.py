@@ -193,11 +193,21 @@ def stats(update, context):
         context.bot.send_message(chat_id=group_chat_id, text=message)
 
 
+def ask(update, context):
+    message = needs_walks_message(last_walk_elapsed_hours())
+
+    context.bot.send_message(chat_id=group_chat_id, text=message)
+
+
 walk_handler = CommandHandler("walk", walk)
 dispatcher.add_handler(walk_handler)
 
 stats_handler = CommandHandler("stats", stats)
 dispatcher.add_handler(stats_handler)
+
+stats_handler = CommandHandler("ask", stats)
+dispatcher.add_handler(ask)
+
 
 if __name__ == "__main__":
     c = con.cursor()
