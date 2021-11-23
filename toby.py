@@ -190,13 +190,13 @@ def stats(update, context):
             message_lines.append(message_line)
 
         message = "\n".join(message_lines)
-        context.bot.send_message(chat_id=group_chat_id, text=message)
+        context.bot.send_message(chat_id=update.effective_chat.id, text=message)
 
 
 def ask(update, context):
     message = needs_walks_message(last_walk_elapsed_hours())
 
-    context.bot.send_message(chat_id=group_chat_id, text=message)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=message)
 
 
 walk_handler = CommandHandler("walk", walk)
