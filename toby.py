@@ -205,7 +205,7 @@ dispatcher.add_handler(walk_handler)
 stats_handler = CommandHandler("stats", stats)
 dispatcher.add_handler(stats_handler)
 
-stats_handler = CommandHandler("ask", stats)
+stats_handler = CommandHandler("ask", ask)
 dispatcher.add_handler(ask)
 
 
@@ -226,3 +226,4 @@ if __name__ == "__main__":
     )
 
     updater.start_polling()
+    updater.idle()
