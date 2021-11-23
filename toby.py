@@ -205,8 +205,8 @@ dispatcher.add_handler(walk_handler)
 stats_handler = CommandHandler("stats", stats)
 dispatcher.add_handler(stats_handler)
 
-stats_handler = CommandHandler("ask", ask)
-dispatcher.add_handler(ask)
+ask_handler = CommandHandler("ask", ask)
+dispatcher.add_handler(ask_handler)
 
 
 if __name__ == "__main__":
