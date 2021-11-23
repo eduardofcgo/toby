@@ -178,7 +178,7 @@ def stats(update, context):
     statistics = calc_statistics()
 
     if not statistics:
-        context.bot.send_message(chat_id=group_chat_id, text=no_walks_stats_message)
+        context.bot.send_message(chat_id=update.effective_chat.id, text=no_walks_stats_message)
 
     else:
         message_lines = []
